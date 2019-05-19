@@ -1,0 +1,70 @@
+硬體設備：Arduino UNO
+腳位定義：
+	電源開關	7
+	繼電器控制	8
+	溫度計資料	12
+	LED燈號		13
+#define BTN_POWER 7                     //手動開關偵測腳位
+#define RELAY_SW 8                      //繼電器控制
+#define ONE_WIRE_BUS 12 
+#define ledPin 13
+
+參數定義			
+參數型態	參數名稱		預設值	說明
+String		str_IAM			default	設備代號，系統上電後，由EEPROM代入
+String		str_tmp			default	系統運算使用
+boolean		b_SYST_POWE		FALSE	系統總開關 
+false:關
+true:開"
+boolean		b_RELAY			FALSE	"繼電器開關
+false:關
+true:開"
+unsigned long	ul_START_TIME		default	記錄設備工作起始時間，重新上電時重新記錄
+unsigned char	uc_MODE			0	"工作持繼時間模式
+0:不限時
+1:定時20分鐘
+2:定時60分鐘
+3:定時120分鐘
+4:自定時間"
+unsigned char	uc_tType		0	"顯示工作持續時間單位
+0:以分鐘顯示(不顯示在series port)
+1:以秒顯示"
+unsigned int	ui_MAX_WORKING_MIN	0	自定工作時間(僅作用於uc_MODE = 4)
+boolean		b_HEAT_MODE		TRUE	"溫度控制模式
+false:制冷
+true:加熱"
+boolean		b_SHOW_TEMP		FALSE	連續顯示溫度的開關
+boolean		b_JSON_MODE		TRUE	是否以JSON格式傳輸資訊，20180826後完全使用true，false模式不再維護
+float		f_TARG_TEMP		default	控制目標溫度，系統上電後由EEPROM代入
+float		f_TEMP_RANG		default	控制目標溫度的上下限範圍，系統上電後由EEPROM代入
+String		str_CMD			default	系統運算使用
+String		str_check		default	系統運算使用
+char*		cp			default	系統運算使用
+
+
+
+指令定義			
+單一指令集	(需全小寫，結尾需加分號";")		
+指令名稱	說明		
+whoru		回覆顯示設備代號		
+poweron		開啟系統電源		
+poweroff	關閉系統電源		
+showinfo	顯示系統目前資訊		
+showon		開啟連續顯示溫度		
+showoff		關閉連續顯示溫度		
+showeep		顯示EEPROM數值 1kbit		
+relayon		開啟繼電器(此功能仍受限系統控制 ，不建議使用)		
+relayoff	關閉繼電器(此功能仍受限系統控制 ，不建議使用)		
+			
+複合指令集	(大小寫皆可，結尾需加分號";")		
+指令名稱	參數	數值	說明
+SETDATA		temp	-20~100	設定目標溫度，不保存
+		rang	±25.5	設定目標溫度上下限，不保存
+		mode	0~4	整數值，設定工作定時模式，不保存
+		maxt	0~65535	整數值，設定自定工作分鐘上限，不保存
+
+SETEEP		temp	-20~100	設定目標溫度，同時保存於EEPROM。
+		rang	±25.5	設定目標溫度上下限，同時保存於EEPROM。
+		mode	0~4	整數值，設定工作定時模式，同時保存於EEPROM。
+		maxt	0~65535	整數值，設定自定工作分鐘上限，同時保存於EEPROM。
+		title	無	輸入此指令自動將"L-110-0000"寫入EEPROM，不推蔫使用。
